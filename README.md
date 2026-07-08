@@ -72,7 +72,8 @@ npx create-turbo@latest .
   "devDependencies": {
     "turbo": "^2.0.0"
   }
-} ```
+} 
+```
 
 **Root `turbo.json:`**
 ```json
