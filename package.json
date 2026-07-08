@@ -1,0 +1,42 @@
+{
+  "name": "cement-supply-web",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "test": "turbo run test",
+    "dev:api": "turbo run dev --filter=@jcil/api",
+    "dev:web": "turbo run dev --filter=@jcil/web",
+    "build:api": "turbo run build --filter=@jcil/api",
+    "build:web": "turbo run build --filter=@jcil/web",
+    "lint:api": "turbo run lint --filter=@jcil/api",
+    "lint:web": "turbo run lint --filter=@jcil/web",
+    "test:api": "turbo run test --filter=@jcil/api",
+    "test:web": "turbo run test --filter=@jcil/web",
+    "check-types:api": "turbo run check-types --filter=@jcil/api",
+    "check-types:web": "turbo run check-types --filter=@jcil/web",
+    "check-types:shared": "turbo run check-types --filter=@jcil/shared",
+    "check-types": "turbo run check-types"
+  },
+  "devDependencies": {
+    "prettier": "^3.7.4",
+    "turbo": "^2.0.0",
+    "typescript": "5.9.2"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "npm",
+      "version": "11.18.0"
+    }
+  }
+}
