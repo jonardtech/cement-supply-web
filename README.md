@@ -46,6 +46,7 @@ cement-supply-web/
 git clone https://github.com/jonardtech/cement-supply-web.git
 cd cement-supply-web
 npx create-turbo@latest .
+```
 
 **Key Configuration Files:**
 **Root `package.json:`**
@@ -93,7 +94,8 @@ npx create-turbo@latest .
       "dependsOn": ["^build"]
     }
   }
-} ```
+} 
+```
 
 **Shared Package (packages/shared/package.json):**
 ```json
@@ -109,7 +111,8 @@ npx create-turbo@latest .
   "devDependencies": {
     "typescript": "^5.0.0"
   }
-} ```
+} 
+```
 
 **Shared Package TypeScript Config (`packages/shared/tsconfig.json`):**
 ```json
@@ -128,7 +131,8 @@ npx create-turbo@latest .
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
-} ```
+} 
+```
 
 **Comprehensive `.gitignore:**
 ```gitignore
@@ -187,7 +191,8 @@ coverage/
 ```bash
 git checkout -b develop
 git push -u origin develop
-git checkout main ```
+git checkout main 
+```
 
 #### 2.2 **Branch Protection Rules**
 
@@ -328,8 +333,8 @@ jobs:
 
       - name: Build Shared Package
         working-directory: packages/shared
-        run: npm run build ```
-
+        run: npm run build 
+```
 
 #### 3.2 **Package Scripts Configuration**
 Backend Scripts (apps/api/package.json):
@@ -343,7 +348,8 @@ Backend Scripts (apps/api/package.json):
     "test": "jest",
     "test:e2e": "jest --config ./test/jest-e2e.json"
   }
-}```
+}
+```
 
 Frontend Scripts (apps/web/package.json):
 ```json
@@ -355,14 +361,16 @@ Frontend Scripts (apps/web/package.json):
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "type-check": "tsc --noEmit"
   }
-}```
+}
+```
 
 
 **Frontend ESLint Config (`apps/web/.eslintrc.json`):**
 ```json
 {
   "extends": "next/core-web-vitals"
-} ```
+} 
+```
 
 
 #### 3.3 **Fixed Backend Lint Error**
