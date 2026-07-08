@@ -43,14 +43,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22' # Updated to Node 22 LTS
-          cache: 'npm'
+          node-version: '22'
+
+      - name: Upgrade npm to required version
+        run: npm install -g npm@11.18.0
 
       - name: Install dependencies
-        run: npm install # Using install instead of ci for initial setup flexibility
+        run: npm install
 
       - name: Run ESLint (Code Quality)
-        working-directory: apps/api # Much more reliable in CI than --workspace
+        working-directory: apps/api
         run: npm run lint
 
       - name: Run Unit Tests
@@ -74,14 +76,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22' # Updated to Node 22 LTS
-          cache: 'npm'
+          node-version: '22'
+
+      - name: Upgrade npm to required version
+        run: npm install -g npm@11.18.0
 
       - name: Install dependencies
         run: npm install
 
       - name: Run ESLint
-        working-directory: apps/web # Fixes the exit code 127 error
+        working-directory: apps/web
         run: npm run lint
 
       - name: Build Next.js App
@@ -102,8 +106,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22' # Updated to Node 22 LTS
-          cache: 'npm'
+          node-version: '22'
+
+      - name: Upgrade npm to required version
+        run: npm install -g npm@11.18.0
 
       - name: Install dependencies
         run: npm install
