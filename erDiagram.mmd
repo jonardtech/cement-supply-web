@@ -1,0 +1,220 @@
+---
+config:
+  theme: default
+---
+%% ============================================
+%% LAYOUT DIRECTION - Change this line to adjust layout:
+%%   TB = Top to Bottom (default, good for wide diagrams)
+%%   BT = Bottom to Top
+%%   LR = Left to Right (good for tall diagrams)
+%%   RL = Right to Left
+%% ============================================
+%% direction TB
+%% ============================================
+
+erDiagram
+    %% ============================================
+    %% ENTITIES
+    %% ============================================
+    
+    USERS {
+        bigint id PK
+        string email UK
+        string password_hash
+        enum role
+        string first_name
+        string last_name
+        string phone
+        string mfa_secret
+        boolean is_active
+        int login_attempts
+        datetime locked_until
+    }
+    
+    CLIENTS {
+        bigint id PK
+        string company_name
+        string tin UK
+        enum client_type
+        string district
+        enum default_payment_terms
+        decimal credit_limit
+        decimal current_credit_balance
+        boolean is_active
+    }
+    
+    CLIENT_USERS {
+        bigint id PK
+        bigint client_id FK
+        bigint user_id FK
+        boolean is_primary_contact
+    }
+    
+    CEMENT_CATEGORIES {
+        bigint id PK
+        string name
+        string default_unit
+        decimal base_price
+        string ura_tax_code
+        boolean is_active
+    }
+    
+    PRICING_ADJUSTMENTS {
+        bigint id PK
+        bigint cement_category_id FK
+        enum adjustment_type
+        decimal min_quantity
+        decimal max_quantity
+        string region
+        decimal adjustment_value
+        boolean is_active
+    }
+    
+    ORDERS {
+        bigint id PK
+        string order_number UK
+        bigint client_id FK
+        bigint created_by FK
+        enum status
+        date delivery_date
+        enum transport_mode
+        string vehicle_reg
+        decimal subtotal
+        decimal vat_amount
+        decimal total_amount
+        bigint dispatched_by FK
+    }
+    
+    ORDER_ITEMS {
+        bigint id PK
+        bigint order_id FK
+        bigint cement_category_id FK
+        decimal quantity
+        decimal unit_price
+        decimal volume_adj
+        decimal region_adj
+        decimal subtotal
+    }
+    
+    INVOICES {
+        bigint id PK
+        string invoice_number UK
+        bigint order_id FK
+        bigint client_id FK
+        date issue_date
+        date due_date
+        decimal subtotal
+        decimal vat_amount
+        decimal total_amount
+        enum efris_status
+        string ura_invoice_num
+        string ura_invoice_url
+        json efris_payload
+    }
+    
+    PAYMENT_PROOFS {
+        bigint id PK
+        bigint invoice_id FK
+        bigint uploaded_by FK
+        string file_url
+        string file_type
+        int file_size_bytes
+        decimal amount_ugx
+        enum payment_method
+        enum status
+        bigint reconciled_by FK
+        datetime reconciled_at
+    }
+    
+    MOBILE_DEVICES {
+        bigint id PK
+        bigint user_id FK
+        string device_token UK
+        enum device_os
+        string app_version
+        datetime last_active_at
+        boolean is_active
+    }
+    
+    OFFLINE_SYNC_LOGS {
+        bigint id PK
+        bigint user_id FK
+        string client_action_id UK
+        enum action_type
+        string entity_type
+        bigint entity_id
+        datetime local_timestamp
+        string payload_hash
+        datetime synced_at
+    }
+    
+    AUDIT_LOGS {
+        bigint id PK
+        bigint user_id FK
+        string action
+        string entity_type
+        bigint entity_id
+        json old_values
+        json new_values
+        string ip_address
+    }
+    
+    SUPPORT_TICKETS {
+        bigint id PK
+        bigint user_id FK
+        string subject
+        text description
+        enum priority
+        enum status
+        bigint assigned_to FK
+    }
+    
+    %% ============================================
+    %% RELATIONSHIPS
+    %% ============================================
+    
+    %% Users ↔ Clients (M:N via junction)
+    USERS ||--o{ CLIENT_USERS : "belongs to"
+    CLIENTS ||--o{ CLIENT_USERS : "has members"
+    
+    %% Users → Orders (two roles: creator & dispatcher)
+    USERS ||--o{ ORDERS : "creates (created_by)"
+    USERS ||--o{ ORDERS : "dispatches (dispatched_by)"
+    
+    %% Clients → Orders
+    CLIENTS ||--o{ ORDERS : "places"
+    
+    %% Orders → Order Items
+    ORDERS ||--o{ ORDER_ITEMS : "contains"
+    
+    %% Cement Categories → Order Items
+    CEMENT_CATEGORIES ||--o{ ORDER_ITEMS : "appears in"
+    
+    %% Cement Categories → Pricing Adjustments
+    CEMENT_CATEGORIES ||--o{ PRICING_ADJUSTMENTS : "has rules"
+    
+    %% Orders → Invoices
+    ORDERS ||--o{ INVOICES : "billed via"
+    
+    %% Clients → Invoices
+    CLIENTS ||--o{ INVOICES : "receives"
+    
+    %% Invoices → Payment Proofs
+    INVOICES ||--o{ PAYMENT_PROOFS : "settled by"
+    
+    %% Users → Payment Proofs (two roles: uploader & reconciler)
+    USERS ||--o{ PAYMENT_PROOFS : "uploads (uploaded_by)"
+    USERS ||--o{ PAYMENT_PROOFS : "reconciles (reconciled_by)"
+    
+    %% Users → Mobile Devices
+    USERS ||--o{ MOBILE_DEVICES : "owns"
+    
+    %% Users → Offline Sync Logs
+    USERS ||--o{ OFFLINE_SYNC_LOGS : "generates"
+    
+    %% Users → Audit Logs (nullable)
+    USERS ||--o{ AUDIT_LOGS : "triggers"
+    
+    %% Users → Support Tickets (two roles: reporter & assignee)
+    USERS ||--o{ SUPPORT_TICKETS : "reports (user_id)"
+    USERS ||--o{ SUPPORT_TICKETS : "handles (assigned_to)"
