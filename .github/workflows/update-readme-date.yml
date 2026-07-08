@@ -1,0 +1,48 @@
+name: Update README Date
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'README_Turborepo.md'
+      - 'README.md'
+      - 'apps/**'
+      - 'packages/**'
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  update-date:
+    runs-on: ubuntu-latest
+    # Skip if the commit message contains [skip ci] to prevent infinite loops
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Update README date
+        run: |
+          # Get current date in format: July 9, 2026
+          CURRENT_DATE=$(date +"%B %-d, %Y")
+          
+          # Update the "Last Updated" line in README.md
+          sed -i "s/\*\*Last Updated:\*\*.*/\*\*Last Updated:\*\* $CURRENT_DATE/" README.md
+          
+          # Check if there are changes
+          if git diff --quiet README.md; then
+            echo "No changes to README.md"
+            exit 0
+          fi
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "chore: update README last updated date [skip ci]" || exit 0
+          git push
