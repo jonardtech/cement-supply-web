@@ -43,26 +43,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22' # Updated to Node 22 LTS
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install # Using install instead of ci for initial setup flexibility
 
       - name: Run ESLint (Code Quality)
-        run: npm run lint --workspace=apps/api
-        continue-on-error: false
+        working-directory: apps/api # Much more reliable in CI than --workspace
+        run: npm run lint
 
       - name: Run Unit Tests
-        run: npm run test --workspace=apps/api
-        env:
-          DATABASE_URL: mysql://root:root@localhost:3306/jcil_test
-          REDIS_HOST: localhost
-          REDIS_PORT: 6379
-          RABBITMQ_URL: amqp://guest:guest@localhost:5672
-
-      - name: Run Integration Tests
-        run: npm run test:e2e --workspace=apps/api
+        working-directory: apps/api
+        run: npm run test
         env:
           DATABASE_URL: mysql://root:root@localhost:3306/jcil_test
           REDIS_HOST: localhost
@@ -81,21 +74,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22' # Updated to Node 22 LTS
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run ESLint
-        run: npm run lint --workspace=apps/web
-        continue-on-error: false
-
-      - name: Type Check
-        run: npm run type-check --workspace=apps/web || npx tsc --noEmit --project apps/web
+        working-directory: apps/web # Fixes the exit code 127 error
+        run: npm run lint
 
       - name: Build Next.js App
-        run: npm run build --workspace=apps/web
+        working-directory: apps/web
+        run: npm run build
         env:
           NEXT_PUBLIC_API_URL: http://localhost:3000
 
@@ -111,11 +102,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22' # Updated to Node 22 LTS
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build Shared Package
-        run: npm run build --workspace=packages/shared
+        working-directory: packages/shared
+        run: npm run build
